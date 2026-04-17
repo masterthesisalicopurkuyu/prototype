@@ -35,7 +35,7 @@ class WeatherData(BaseModel):
     Zaidman & Gross, 2015 – API Evolution Patterns).
     """
     location: str
-    temperature_celsius: dict  # {"value": float, "unit": str}
+    temp: float
     wind_speed: float
     condition: str
     timestamp: str

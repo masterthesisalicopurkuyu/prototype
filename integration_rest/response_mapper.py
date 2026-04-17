@@ -59,10 +59,9 @@ def map_weather_response(raw_response: dict) -> str:
     Diese Feldnamen bilden direkte Kopplungspunkte zum Provider.
     Eine Umbenennung im Provider (Szenario B) erfordert Anpassung hier.
     """
-    temp_data = raw_response['temperature_celsius']
     return (
         f"Weather in {raw_response['location']}: "
-        f"{temp_data['value']}{temp_data['unit']}, "
+        f"{raw_response['temp']}°C, "
         f"Wind: {raw_response['wind_speed']} km/h, "
         f"Condition: {raw_response['condition']}"
     )
