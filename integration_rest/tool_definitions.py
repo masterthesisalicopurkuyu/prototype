@@ -38,7 +38,7 @@ TOOL_DEFINITIONS = [
         "function": {
             "name": "get_weather",
             "description": "Get current weather data for a specific city. "
-            "Returns temperature, wind speed, weather condition, and humidity.",
+            "Returns temperature, wind speed, and weather condition.",
             "parameters": {
                 "type": "object",
                 "properties": {
