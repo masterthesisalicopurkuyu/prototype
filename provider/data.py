@@ -29,21 +29,21 @@ from datetime import datetime, timezone
 WEATHER_DATA: dict[str, dict] = {
     "Stuttgart": {
         "location": "Stuttgart",
-        "temp": 22.5,
+        "temperature_celsius": {"value": 22.5, "unit": "°C"},
         "wind_speed": 15.3,
         "condition": "sunny",
         "timestamp": datetime.now(timezone.utc).isoformat(),
     },
     "Berlin": {
         "location": "Berlin",
-        "temp": 18.0,
+        "temperature_celsius": {"value": 18.0, "unit": "°C"},
         "wind_speed": 22.1,
         "condition": "cloudy",
         "timestamp": datetime.now(timezone.utc).isoformat(),
     },
     "München": {
         "location": "München",
-        "temp": 20.3,
+        "temperature_celsius": {"value": 20.3, "unit": "°C"},
         "wind_speed": 10.5,
         "condition": "partly cloudy",
         "timestamp": datetime.now(timezone.utc).isoformat(),
