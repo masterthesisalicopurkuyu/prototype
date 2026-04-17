@@ -38,6 +38,7 @@ class WeatherData(BaseModel):
     temp: float
     wind_speed: float
     condition: str
+    humidity: float
     timestamp: str
 
 

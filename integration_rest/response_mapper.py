@@ -63,7 +63,8 @@ def map_weather_response(raw_response: dict) -> str:
         f"Weather in {raw_response['location']}: "
         f"{raw_response['temp']}°C, "
         f"Wind: {raw_response['wind_speed']} km/h, "
-        f"Condition: {raw_response['condition']}"
+        f"Condition: {raw_response['condition']}, "
+        f"Humidity: {raw_response['humidity']}%"
     )
 
 
