@@ -47,17 +47,28 @@ mcp = FastMCP(
 
 @mcp.tool(
     name="get_weather",
-    description="Get current weather data for a specific city. "
+    description="[DEPRECATED – use get_weather_v2] Get current weather data for a specific city. "
     "Returns temperature, wind speed, and weather condition.",
 )
 def get_weather_tool(location: str) -> str:
-    """MCP-Tool für Wetterdaten.
+    """MCP-Tool für Wetterdaten (deprecated)."""
+    result = get_weather(location)
+    if result is None:
+        available = get_locations().locations
+        return json.dumps({
+            "error": f"Location '{location}' not found.",
+            "available_locations": available,
+        })
+    return result.model_dump_json()
 
-    Das Input-Schema (location: str) wird vom MCP-Server automatisch als
-    JSON-Schema exponiert und via tools/list dem Client bereitgestellt.
-    Der Client muss dieses Schema NICHT manuell definieren – im Gegensatz
-    zur REST-Variante, wo tool_definitions.py diese Aufgabe übernimmt.
-    """
+
+@mcp.tool(
+    name="get_weather_v2",
+    description="Get current weather data for a specific city (V2 – preferred). "
+    "Returns temperature, wind speed, and weather condition.",
+)
+def get_weather_v2_tool(location: str) -> str:
+    """MCP-Tool für Wetterdaten (V2)."""
     result = get_weather(location)
     if result is None:
         available = get_locations().locations

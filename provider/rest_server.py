@@ -27,7 +27,7 @@ import os
 # Projektroot zum Python-Path hinzufügen
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from provider.weather_service import get_weather, get_locations
 from provider.models import WeatherData, LocationList
 
@@ -44,15 +44,28 @@ app = FastAPI(
     summary="Wetterdaten für einen Standort abrufen",
     description="Gibt aktuelle Wetterdaten für den angegebenen Standort zurück.",
 )
-async def api_get_weather(location: str) -> WeatherData:
-    """GET /api/v1/weather?location={name}
+async def api_get_weather(location: str, response: Response) -> WeatherData:
+    """GET /api/v1/weather?location={name} [DEPRECATED]"""
+    response.headers["Deprecation"] = "true"
+    response.headers["Link"] = '</api/v2/weather>; rel="successor-version"'
+    result = get_weather(location)
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Location '{location}' not found. "
+            f"Available: {get_locations().locations}",
+        )
+    return result
 
-    Kopplungspunkte für den Consumer (REST-Integrationsschicht):
-    - URL-Pfad: /api/v1/weather (hardcoded in config.json)
-    - Query-Parameter: location (hardcoded in rest_client.py)
-    - Response-Feldnamen: location, temp, wind_speed, condition, timestamp
-      (hardcoded in response_mapper.py und tool_definitions.py)
-    """
+
+@app.get(
+    "/api/v2/weather",
+    response_model=WeatherData,
+    summary="Wetterdaten V2",
+    description="Aktuelle Wetterdaten (V2 – bevorzugte Version).",
+)
+async def api_get_weather_v2(location: str) -> WeatherData:
+    """GET /api/v2/weather?location={name} – neue Version"""
     result = get_weather(location)
     if result is None:
         raise HTTPException(
@@ -70,12 +83,7 @@ async def api_get_weather(location: str) -> WeatherData:
     description="Gibt eine Liste aller verfügbaren Standorte zurück.",
 )
 async def api_get_locations() -> LocationList:
-    """GET /api/v1/locations
-
-    Kopplungspunkte für den Consumer:
-    - URL-Pfad: /api/v1/locations (hardcoded in config.json)
-    - Response-Feld: locations (Array von Strings)
-    """
+    """GET /api/v1/locations"""
     return get_locations()
 
 
