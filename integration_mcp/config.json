@@ -1,0 +1,6 @@
+{
+    "server": {
+        "command": ".venv/Scripts/python",
+        "args": ["provider/mcp_server.py"]
+    }
+}

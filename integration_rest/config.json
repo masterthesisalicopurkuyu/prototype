@@ -1,0 +1,7 @@
+{
+    "base_url": "http://127.0.0.1:8000",
+    "endpoints": {
+        "get_weather": "/api/v1/weather",
+        "get_locations": "/api/v1/locations"
+    }
+}
