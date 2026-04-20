@@ -32,6 +32,7 @@ WEATHER_DATA: dict[str, dict] = {
         "temp": 22.5,
         "wind_speed": 15.3,
         "condition": "sunny",
+        "humidity": 45.0,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     },
     "Berlin": {
@@ -39,6 +40,7 @@ WEATHER_DATA: dict[str, dict] = {
         "temp": 18.0,
         "wind_speed": 22.1,
         "condition": "cloudy",
+        "humidity": 72.0,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     },
     "München": {
@@ -46,6 +48,7 @@ WEATHER_DATA: dict[str, dict] = {
         "temp": 20.3,
         "wind_speed": 10.5,
         "condition": "partly cloudy",
+        "humidity": 58.0,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     },
 }

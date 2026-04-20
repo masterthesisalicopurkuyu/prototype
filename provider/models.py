@@ -26,6 +26,7 @@ class WeatherData(BaseModel):
     - temp: Temperatur in Celsius (Float)
     - wind_speed: Windgeschwindigkeit in km/h (Float)
     - condition: Wetterbedingung als Freitext (String)
+    - humidity: relative Luftfeuchtigkeit in Prozent (Float; Szenario A)
     - timestamp: ISO-8601-Zeitstempel (String)
 
     WICHTIG: Die Feldnamen (insb. 'temp') sind bewusst gewählt, um in
@@ -38,6 +39,7 @@ class WeatherData(BaseModel):
     temp: float
     wind_speed: float
     condition: str
+    humidity: float
     timestamp: str
 
 

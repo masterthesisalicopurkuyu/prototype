@@ -50,7 +50,7 @@ async def api_get_weather(location: str) -> WeatherData:
     Kopplungspunkte für den Consumer (REST-Integrationsschicht):
     - URL-Pfad: /api/v1/weather (hardcoded in config.json)
     - Query-Parameter: location (hardcoded in rest_client.py)
-    - Response-Feldnamen: location, temp, wind_speed, condition, timestamp
+    - Response-Feldnamen: location, temp, wind_speed, condition, humidity, timestamp
       (hardcoded in response_mapper.py und tool_definitions.py)
     """
     result = get_weather(location)

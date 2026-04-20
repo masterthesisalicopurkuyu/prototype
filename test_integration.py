@@ -28,7 +28,8 @@ async def test_provider():
     assert weather.location == "Stuttgart"
     assert weather.temp == 22.5
     assert weather.condition == "sunny"
-    print(f"    ✓ get_weather('Stuttgart') = {weather.temp}°C, {weather.condition}")
+    assert weather.humidity == 45.0
+    print(f"    ✓ get_weather('Stuttgart') = {weather.temp}°C, {weather.condition}, {weather.humidity}%")
 
     none_result = get_weather("Atlantis")
     assert none_result is None, "Atlantis sollte None sein"
@@ -75,9 +76,10 @@ async def test_rest_integration():
             from integration_rest.response_mapper import map_response
             mapped = map_response("get_weather", {
                 "location": "Stuttgart", "temp": 22.5,
-                "wind_speed": 15.3, "condition": "sunny"
+                "wind_speed": 15.3, "condition": "sunny", "humidity": 45.0,
             })
             assert "22.5°C" in mapped
+            assert "Humidity: 45.0%" in mapped
             print(f"    ✓ response_mapper → '{mapped[:50]}...'")
 
             # RestToolExecutor
@@ -120,7 +122,8 @@ async def test_mcp_integration():
     result_data = json.loads(result)
     assert result_data["location"] == "München"
     assert result_data["temp"] == 20.3
-    print(f"    ✓ call_tool('get_weather', München) → {result_data['temp']}°C")
+    assert result_data["humidity"] == 58.0
+    print(f"    ✓ call_tool('get_weather', München) → {result_data['temp']}°C, {result_data['humidity']}%")
 
     return True
 
@@ -150,6 +153,7 @@ async def test_functional_equivalence():
         assert rest_data["temp"] == mcp_data["temp"]
         assert rest_data["wind_speed"] == mcp_data["wind_speed"]
         assert rest_data["condition"] == mcp_data["condition"]
+        assert rest_data["humidity"] == mcp_data["humidity"]
         print(f"    ✓ REST: {rest_data['temp']}°C  ==  MCP: {mcp_data['temp']}°C")
         print(f"    ✓ REST: {rest_data['condition']}  ==  MCP: {mcp_data['condition']}")
         print("    ✓ Funktionale Äquivalenz bestätigt!")

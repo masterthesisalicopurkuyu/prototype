@@ -48,7 +48,7 @@ mcp = FastMCP(
 @mcp.tool(
     name="get_weather",
     description="Get current weather data for a specific city. "
-    "Returns temperature, wind speed, and weather condition.",
+    "Returns temperature, wind speed, weather condition, and humidity.",
 )
 def get_weather_tool(location: str) -> str:
     """MCP-Tool für Wetterdaten.
