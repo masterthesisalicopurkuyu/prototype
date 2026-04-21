@@ -1,6 +1,12 @@
 {
-    "server": {
-        "command": ".venv/Scripts/python",
-        "args": ["provider/mcp_server.py"]
-    }
+    "servers": [
+        {
+            "command": ".venv/Scripts/python",
+            "args": ["provider/mcp_server.py"]
+        },
+        {
+            "command": ".venv/Scripts/python",
+            "args": ["provider/mcp_location_server.py"]
+        }
+    ]
 }

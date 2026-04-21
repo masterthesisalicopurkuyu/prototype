@@ -1,7 +1,16 @@
 {
-    "base_url": "http://127.0.0.1:8000",
-    "endpoints": {
-        "get_weather": "/api/v1/weather",
-        "get_locations": "/api/v1/locations"
+    "servers": {
+        "weather": {
+            "base_url": "http://127.0.0.1:8000",
+            "endpoints": {
+                "get_weather": "/api/v1/weather"
+            }
+        },
+        "locations": {
+            "base_url": "http://127.0.0.1:8001",
+            "endpoints": {
+                "get_locations": "/api/v1/locations"
+            }
+        }
     }
 }

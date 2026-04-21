@@ -30,10 +30,13 @@ export GROQ_API_KEY=<dein-key>      # Linux/Mac
 
 ### REST-Variante
 ```bash
-# Terminal 1: REST-Server starten
+# Szenario D: zwei REST-Dienste (Wetter :8000, Standorte :8001)
+# Terminal 1: WeatherDataService
 python provider/rest_server.py
+# Terminal 2: LocationService
+python provider/rest_location_server.py
 
-# Terminal 2: Agent starten
+# Terminal 3: Agent starten
 python main_rest.py
 ```
 
@@ -45,9 +48,10 @@ python main_mcp.py
 
 ### Integrationstest (ohne LLM)
 ```bash
-# REST-Server muss laufen!
-python provider/rest_server.py  # Terminal 1
-python test_integration.py      # Terminal 2
+# Beide REST-Dienste müssen laufen (Szenario D)
+python provider/rest_server.py           # Terminal 1 (Port 8000)
+python provider/rest_location_server.py    # Terminal 2 (Port 8001)
+python test_integration.py                 # Terminal 3
 ```
 
 ## Architektur
@@ -69,8 +73,10 @@ LLM (Groq API, temperature=0)
 | Provider | `weather_service.py` | Geteilt | Geschäftslogik |
 | Provider | `models.py` | Geteilt | Pydantic-Datenmodelle |
 | Provider | `data.py` | Geteilt | Statische Wetterdaten |
-| Provider | `rest_server.py` | REST | FastAPI-Server |
-| Provider | `mcp_server.py` | MCP | MCP-Server (FastMCP) |
+| Provider | `rest_server.py` | REST | FastAPI Weather (:8000, Szenario D) |
+| Provider | `rest_location_server.py` | REST | FastAPI Locations (:8001, Szenario D) |
+| Provider | `mcp_server.py` | MCP | MCP Weather-Server |
+| Provider | `mcp_location_server.py` | MCP | MCP Location-Server |
 | Agent | `agent.py` | Geteilt | Function-Calling-Agent |
 | Agent | `llm_client.py` | Geteilt | Groq API Wrapper |
 | Integration | `tool_definitions.py` | REST ★ | Manuelle Schemas |

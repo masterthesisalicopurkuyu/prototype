@@ -58,10 +58,11 @@ class McpToolExecutor:
         with open(config_path, "r") as f:
             self.config = json.load(f)
 
-        self.server_params = StdioServerParameters(
-            command=self.config["server"]["command"],
-            args=self.config["server"]["args"],
-        )
+        # Szenario D: mehrere MCP-Server (stdio), tools/list pro Server aggregieren
+        self.server_params_list = [
+            StdioServerParameters(command=srv["command"], args=srv["args"])
+            for srv in self.config["servers"]
+        ]
 
     async def get_available_tools(self) -> list[dict]:
         """Tool-Definitionen via MCP tools/list dynamisch abrufen.
@@ -81,27 +82,22 @@ class McpToolExecutor:
         (Szenario A) oder ein Schema ändert (Szenario B), wird dies
         beim nächsten tools/list-Aufruf sichtbar – OHNE Code-Änderung.
         """
-        async with stdio_client(self.server_params) as (read, write):
-            async with ClientSession(read, write) as session:
-                await session.initialize()
-
-                # tools/list: Dynamische Capability-Discovery
-                tools_result = await session.list_tools()
-
-                # Konvertierung MCP-Tool-Format → Function-Calling-Format
-                tool_definitions = []
-                for tool in tools_result.tools:
-                    tool_def = {
-                        "type": "function",
-                        "function": {
-                            "name": tool.name,
-                            "description": tool.description or "",
-                            "parameters": tool.inputSchema,
-                        },
-                    }
-                    tool_definitions.append(tool_def)
-
-                return tool_definitions
+        all_tools = []
+        for params in self.server_params_list:
+            async with stdio_client(params) as (read, write):
+                async with ClientSession(read, write) as session:
+                    await session.initialize()
+                    tools_result = await session.list_tools()
+                    for tool in tools_result.tools:
+                        all_tools.append({
+                            "type": "function",
+                            "function": {
+                                "name": tool.name,
+                                "description": tool.description or "",
+                                "parameters": tool.inputSchema,
+                            },
+                        })
+        return all_tools
 
     async def execute(self, tool_name: str, arguments: dict) -> str:
         """Tool-Call via MCP call_tool ausführen.
@@ -118,15 +114,16 @@ class McpToolExecutor:
         TextContent wird direkt als String zurückgegeben. Feldnamen
         werden NICHT hardcoded referenziert → kein Kopplungspunkt.
         """
-        async with stdio_client(self.server_params) as (read, write):
-            async with ClientSession(read, write) as session:
-                await session.initialize()
+        for params in self.server_params_list:
+            async with stdio_client(params) as (read, write):
+                async with ClientSession(read, write) as session:
+                    await session.initialize()
+                    tools_result = await session.list_tools()
+                    if tool_name not in {t.name for t in tools_result.tools}:
+                        continue
+                    result = await session.call_tool(tool_name, arguments)
+                    if result.content:
+                        return result.content[0].text
+                    return "No result returned from MCP server."
 
-                result = await session.call_tool(tool_name, arguments)
-
-                # MCP liefert Content-Objekte (TextContent, ImageContent, etc.)
-                # Für den Weather Service: TextContent mit JSON-String
-                if result.content:
-                    return result.content[0].text
-
-                return "No result returned from MCP server."
+        return f"Error: Tool '{tool_name}' not found on any server."

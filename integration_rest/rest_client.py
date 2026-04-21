@@ -37,13 +37,18 @@ class RestToolExecutor:
         """REST-Client initialisieren.
 
         Args:
-            config_path: Pfad zur config.json mit Base-URL und Endpoints.
+            config_path: Pfad zur config.json mit Base-URL und Endpoints
+                (Szenario D: verschachtelte servers.* mit je base_url/endpoints).
         """
         with open(config_path, "r") as f:
             self.config = json.load(f)
 
-        self.base_url = self.config["base_url"]
-        self.endpoints = self.config["endpoints"]
+        # Szenario D: Multi-Server-Routing – tool_name -> (base_url, endpoint_path)
+        self.tool_routes = {}
+        for _server_name, server_cfg in self.config["servers"].items():
+            base = server_cfg["base_url"]
+            for tool_name, endpoint in server_cfg["endpoints"].items():
+                self.tool_routes[tool_name] = (base, endpoint)
 
     async def get_available_tools(self) -> list[dict]:
         """Tool-Definitionen zurückgeben.
@@ -69,16 +74,17 @@ class RestToolExecutor:
             Formatierte Antwort als String (via response_mapper).
 
         Kopplungskette:
-            LLM → tool_name → endpoints[tool_name] → HTTP GET → JSON →
-            response_mapper → formatierter String
+            LLM → tool_name → tool_routes[tool_name] → (base_url, path) →
+            HTTP GET → JSON → response_mapper → formatierter String
         """
         from integration_rest.response_mapper import map_response
 
-        endpoint = self.endpoints.get(tool_name)
-        if endpoint is None:
+        route = self.tool_routes.get(tool_name)
+        if route is None:
             return f"Error: Unknown tool '{tool_name}'"
 
-        url = f"{self.base_url}{endpoint}"
+        base_url, endpoint = route
+        url = f"{base_url}{endpoint}"
 
         async with httpx.AsyncClient() as client:
             response = await client.get(url, params=arguments)

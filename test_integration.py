@@ -58,8 +58,8 @@ async def test_rest_integration():
             assert data["temp"] == 22.5
             print(f"    ✓ GET /api/v1/weather?location=Stuttgart → {data['temp']}°C")
 
-            # Locations-Endpoint
-            r = await client.get("http://127.0.0.1:8000/api/v1/locations")
+            # Locations-Endpoint (Szenario D: eigener Service auf Port 8001)
+            r = await client.get("http://127.0.0.1:8001/api/v1/locations")
             assert r.status_code == 200
             data = r.json()
             assert len(data["locations"]) == 3
@@ -90,7 +90,11 @@ async def test_rest_integration():
             print(f"    ✓ RestToolExecutor.execute('get_weather', Berlin) → OK")
 
     except httpx.ConnectError:
-        print("    ⚠ REST-Server nicht erreichbar! Starte: python provider/rest_server.py")
+        print(
+            "    ⚠ REST-Server nicht erreichbar! Szenario D: "
+            "python provider/rest_server.py (8000) und "
+            "python provider/rest_location_server.py (8001)"
+        )
         return False
 
     return True
@@ -105,10 +109,11 @@ async def test_mcp_integration():
 
     # tools/list
     tools = await executor.get_available_tools()
-    assert len(tools) >= 1
     tool_names = [t["function"]["name"] for t in tools]
     assert "get_weather" in tool_names
-    print(f"    ✓ tools/list → {tool_names}")
+    assert "get_locations" in tool_names
+    assert len(tool_names) >= 2
+    print(f"    ✓ tools/list (aggregiert) → {tool_names}")
 
     # Schema vorhanden
     weather_tool = [t for t in tools if t["function"]["name"] == "get_weather"][0]
