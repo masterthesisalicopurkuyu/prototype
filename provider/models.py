@@ -21,21 +21,17 @@ from pydantic import BaseModel
 class WeatherData(BaseModel):
     """Wetterdaten für einen Standort.
 
-    Felder entsprechen der V1-Baseline-Spezifikation (Kap. 7.7):
+    Ab Szenario B (Breaking Change): Feld ``temperature_celsius`` als
+    Objekt mit numerischem Wert und Einheit (statt flachem ``temp``).
+
     - location: Stadtname (String)
-    - temp: Temperatur in Celsius (Float)
+    - temperature_celsius: {"value": float, "unit": str}
     - wind_speed: Windgeschwindigkeit in km/h (Float)
     - condition: Wetterbedingung als Freitext (String)
     - timestamp: ISO-8601-Zeitstempel (String)
-
-    WICHTIG: Die Feldnamen (insb. 'temp') sind bewusst gewählt, um in
-    Szenario B (Breaking Change) eine Umbenennung zu 'temperature_celsius'
-    durchführen zu können. Die Kurzform 'temp' ist ein realistisches Muster
-    in API-Designs, das häufig zu Breaking Changes führt (vgl. P8: Espinha,
-    Zaidman & Gross, 2015 – API Evolution Patterns).
     """
     location: str
-    temp: float
+    temperature_celsius: dict  # {"value": float, "unit": str}
     wind_speed: float
     condition: str
     timestamp: str

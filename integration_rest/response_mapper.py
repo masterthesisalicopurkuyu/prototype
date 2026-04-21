@@ -26,11 +26,10 @@ WARUM diese Datei bei REST existiert, aber NICHT bei MCP:
 
 KOPPLUNGSPUNKTE IN DIESER DATEI:
     ★ Feldname 'location' (hardcoded)
-    ★ Feldname 'temp' (hardcoded)
+    ★ Feldname 'temperature_celsius' (hardcoded)
     ★ Feldname 'wind_speed' (hardcoded)
     ★ Feldname 'condition' (hardcoded)
-    → Bei Szenario B (Breaking Change: temp → temperature_celsius) MUSS
-      diese Datei angepasst werden.
+    → Szenario B: Breaking Change temp → temperature_celsius (Struktur).
 """
 
 
@@ -55,13 +54,12 @@ def map_response(tool_name: str, raw_response: dict) -> str:
 def map_weather_response(raw_response: dict) -> str:
     """Wetter-Response formatieren.
 
-    HARDCODED Feldnamen: location, temp, wind_speed, condition.
-    Diese Feldnamen bilden direkte Kopplungspunkte zum Provider.
-    Eine Umbenennung im Provider (Szenario B) erfordert Anpassung hier.
+    HARDCODED Feldnamen: location, temperature_celsius, wind_speed, condition.
     """
+    temp_data = raw_response["temperature_celsius"]
     return (
         f"Weather in {raw_response['location']}: "
-        f"{raw_response['temp']}°C, "
+        f"{temp_data['value']}{temp_data['unit']}, "
         f"Wind: {raw_response['wind_speed']} km/h, "
         f"Condition: {raw_response['condition']}"
     )

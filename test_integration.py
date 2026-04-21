@@ -26,9 +26,12 @@ async def test_provider():
     weather = get_weather("Stuttgart")
     assert weather is not None, "Stuttgart sollte existieren"
     assert weather.location == "Stuttgart"
-    assert weather.temp == 22.5
+    assert weather.temperature_celsius == {"value": 22.5, "unit": "°C"}
     assert weather.condition == "sunny"
-    print(f"    ✓ get_weather('Stuttgart') = {weather.temp}°C, {weather.condition}")
+    print(
+        f"    ✓ get_weather('Stuttgart') = {weather.temperature_celsius['value']}"
+        f"{weather.temperature_celsius['unit']}, {weather.condition}"
+    )
 
     none_result = get_weather("Atlantis")
     assert none_result is None, "Atlantis sollte None sein"
@@ -55,8 +58,11 @@ async def test_rest_integration():
             assert r.status_code == 200
             data = r.json()
             assert data["location"] == "Stuttgart"
-            assert data["temp"] == 22.5
-            print(f"    ✓ GET /api/v1/weather?location=Stuttgart → {data['temp']}°C")
+            assert data["temperature_celsius"] == {"value": 22.5, "unit": "°C"}
+            print(
+                f"    ✓ GET /api/v1/weather?location=Stuttgart → "
+                f"{data['temperature_celsius']['value']}{data['temperature_celsius']['unit']}"
+            )
 
             # Locations-Endpoint
             r = await client.get("http://127.0.0.1:8000/api/v1/locations")
@@ -74,8 +80,10 @@ async def test_rest_integration():
             # Response-Mapping
             from integration_rest.response_mapper import map_response
             mapped = map_response("get_weather", {
-                "location": "Stuttgart", "temp": 22.5,
-                "wind_speed": 15.3, "condition": "sunny"
+                "location": "Stuttgart",
+                "temperature_celsius": {"value": 22.5, "unit": "°C"},
+                "wind_speed": 15.3,
+                "condition": "sunny",
             })
             assert "22.5°C" in mapped
             print(f"    ✓ response_mapper → '{mapped[:50]}...'")
@@ -119,8 +127,9 @@ async def test_mcp_integration():
     result = await executor.execute("get_weather", {"location": "München"})
     result_data = json.loads(result)
     assert result_data["location"] == "München"
-    assert result_data["temp"] == 20.3
-    print(f"    ✓ call_tool('get_weather', München) → {result_data['temp']}°C")
+    assert result_data["temperature_celsius"] == {"value": 20.3, "unit": "°C"}
+    tc = result_data["temperature_celsius"]
+    print(f"    ✓ call_tool('get_weather', München) → {tc['value']}{tc['unit']}")
 
     return True
 
@@ -147,10 +156,12 @@ async def test_functional_equivalence():
 
         # Vergleich (ohne Timestamp, da der je nach Aufrufzeitpunkt variiert)
         assert rest_data["location"] == mcp_data["location"]
-        assert rest_data["temp"] == mcp_data["temp"]
+        assert rest_data["temperature_celsius"] == mcp_data["temperature_celsius"]
         assert rest_data["wind_speed"] == mcp_data["wind_speed"]
         assert rest_data["condition"] == mcp_data["condition"]
-        print(f"    ✓ REST: {rest_data['temp']}°C  ==  MCP: {mcp_data['temp']}°C")
+        rtc = rest_data["temperature_celsius"]
+        mtc = mcp_data["temperature_celsius"]
+        print(f"    ✓ REST: {rtc['value']}{rtc['unit']}  ==  MCP: {mtc['value']}{mtc['unit']}")
         print(f"    ✓ REST: {rest_data['condition']}  ==  MCP: {mcp_data['condition']}")
         print("    ✓ Funktionale Äquivalenz bestätigt!")
 
