@@ -1,18 +1,8 @@
 """
-Entry Point: MCP-Variante des Weather Agent.
+Startpunkt der MCP-Variante des Weather Agent.
 
-Startet den Agent mit der MCP-Integrationsschicht:
-    Agent → MCP-ToolExecutor → MCP-Protokoll → MCP-Server
-
-Verwendung:
-    python main_mcp.py
-
-Der MCP-Server wird AUTOMATISCH als Subprocess gestartet (stdio-Transport).
-Kein separater Server-Start nötig – im Gegensatz zur REST-Variante, wo
-der FastAPI-Server manuell gestartet werden muss.
-
-Voraussetzung:
-    - GROQ_API_KEY Umgebungsvariable gesetzt
+Der MCP-Server wird automatisch über den stdio-Transport gestartet.
+Voraussetzung ist die Umgebungsvariable GROQ_API_KEY.
 """
 
 import sys

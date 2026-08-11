@@ -1,35 +1,3 @@
-"""
-Agent-Kern: Minimaler Function-Calling-Agent.
-
-Dieser Agent ist in BEIDEN Varianten (REST und MCP) IDENTISCH. Er ist
-die Kontrollbedingung des Experiments – wenn sich der Agent zwischen den
-Varianten unterscheiden würde, wären Unterschiede in M1–M3 nicht mehr
-eindeutig auf den Integrationsmechanismus zurückführbar (Wohlin et al.,
-2012, Kap. 3 [Q7]).
-
-Der Agent implementiert das grundlegende Tool-Learning-Framework nach
-Qin et al. (2024) [Q5]:
-    1. Understand: User-Prompt empfangen
-    2. Select: LLM wählt passendes Tool basierend auf Tool-Definitionen
-    3. Execute: Agent führt den Tool-Call über den ToolExecutor aus
-
-Schick et al. (2023) [Q4] zeigen mit Toolformer, dass LLMs autonom
-entscheiden können, welche APIs aufgerufen werden. Function Calling
-(OpenAI, 2023 [Q10]) formalisiert dieses Muster: Das LLM erhält
-strukturierte Tool-Beschreibungen und gibt strukturierte Aufrufe zurück.
-
-BEWUSST EINFACH gehalten (~60 LOC):
-- Kein mehrstufiges Reasoning
-- Keine Planungsfähigkeit
-- Keine Schleifen oder Retry-Logik
-- Kein Agent-Framework (LangChain, AutoGen)
-
-Begründung: Ein komplexer Agent würde das LLM-Verhalten als Störvariable
-einführen (Wohlin et al., 2012 [Q7]). Die Metriken (M1–M3) messen den
-ENTWICKLER-Aufwand zur Anpassung des Integrationscodes, nicht die
-Qualität der LLM-Antworten oder die Agent-Architektur.
-"""
-
 import json
 from abc import ABC, abstractmethod
 from agent.llm_client import LLMClient

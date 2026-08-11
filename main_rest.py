@@ -1,16 +1,8 @@
 """
-Entry Point: REST-Variante des Weather Agent.
+Startpunkt der REST-Variante des Weather Agent.
 
-Startet den Agent mit der REST-Integrationsschicht:
-    Agent → REST-ToolExecutor → HTTP → REST-Provider (FastAPI)
-
-Verwendung:
-    1. REST-Server starten: python provider/rest_server.py
-    2. Agent starten:        python main_rest.py
-
-Voraussetzung:
-    - GROQ_API_KEY Umgebungsvariable gesetzt
-    - REST-Server läuft auf http://127.0.0.1:8000
+Voraussetzungen sind die Umgebungsvariable GROQ_API_KEY und ein laufender
+REST-Provider unter http://127.0.0.1:8000.
 """
 
 import sys

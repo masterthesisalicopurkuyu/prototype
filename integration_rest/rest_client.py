@@ -1,27 +1,3 @@
-"""
-REST-Integrationsschicht: HTTP-Client für REST-API-Aufrufe.
-
-Diese Datei ist der ZWEITE Kopplungspunkt der REST-Integration.
-Sie kapselt die HTTP-Kommunikation mit dem REST-Provider.
-
-KOPPLUNGSPUNKTE IN DIESER DATEI:
-    ★ Base-URL (aus config.json geladen)
-    ★ Endpoint-Pfade (aus config.json geladen, z.B. '/api/v1/weather')
-    ★ HTTP-Methode (GET, hardcoded)
-    ★ Query-Parameter-Übergabe (location als params)
-
-Bei Provider-Änderungen (insbesondere Szenario C: Versionierung und
-Szenario D: Refactoring) müssen URL-Pfade, Base-URLs und ggf. die
-Routing-Logik angepasst werden.
-
-VERGLEICH ZU MCP:
-    Bei MCP existiert diese Datei NICHT. Der MCP-Client ruft Tools über
-    session.call_tool(tool_name, arguments) auf – ohne HTTP-URLs, ohne
-    Endpoint-Pfade, ohne HTTP-Methoden. Das MCP-Protokoll abstrahiert
-    den Transport vollständig (Q3: MCP Specification, 2024; Q9: JSON-RPC
-    2.0 als Transportprotokoll).
-"""
-
 import json
 import httpx
 
@@ -47,12 +23,6 @@ class RestToolExecutor:
 
     async def get_available_tools(self) -> list[dict]:
         """Tool-Definitionen zurückgeben.
-
-        Bei REST werden die Definitionen STATISCH aus tool_definitions.py
-        geladen. Sie müssen bei jeder Provider-Änderung MANUELL
-        aktualisiert werden.
-
-        Vergleich MCP: tools/list liefert Definitionen DYNAMISCH.
         """
         from integration_rest.tool_definitions import TOOL_DEFINITIONS
 
@@ -67,10 +37,6 @@ class RestToolExecutor:
 
         Returns:
             Formatierte Antwort als String (via response_mapper).
-
-        Kopplungskette:
-            LLM → tool_name → endpoints[tool_name] → HTTP GET → JSON →
-            response_mapper → formatierter String
         """
         from integration_rest.response_mapper import map_response
 

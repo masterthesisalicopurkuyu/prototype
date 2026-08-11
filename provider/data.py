@@ -1,26 +1,3 @@
-"""
-Statische Wetterdaten (In-Memory).
-
-Die Verwendung statischer In-Memory-Daten anstelle einer externen Datenbank
-ist eine bewusste Designentscheidung:
-
-1. Keine externe DB-Abhängigkeit: Eine Datenbank wäre eine Störvariable,
-   die bei beiden Varianten identisch wäre, aber die Reproduzierbarkeit
-   (R11) gefährden könnte (DB-Version, Konfiguration, Netzwerk).
-
-2. Deterministische Ergebnisse: Rein lesende Operationen auf statische
-   Daten erzeugen bei jedem Aufruf identische Ergebnisse. Dies ist
-   Voraussetzung für die Vergleichbarkeit der Agent-Antworten zwischen
-   REST- und MCP-Variante.
-
-3. Minimale Komplexität (Bedingung 2, Kap. 7.1): Die Komplexität der
-   Arbeit liegt im Bewertungsrahmen, nicht in der Datenquelle.
-
-Drei Städte (Stuttgart, Berlin, München) reichen aus, um die
-Provider-Funktionalität zu demonstrieren und alle vier Szenarien
-durchzuführen.
-"""
-
 from datetime import datetime, timezone
 
 # Statische Wetterdaten – V1 Baseline

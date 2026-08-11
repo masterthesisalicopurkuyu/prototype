@@ -1,30 +1,9 @@
-# ============================================================================
-# Prototyp Dependencies – Masterthesis Bewertungsrahmen
-# ============================================================================
-# Jede Dependency ist begründet (vgl. Kap. 7.5 Technologie-Stack):
-#
-# Provider-Schicht:
-#   fastapi      – REST-Provider mit Auto-OpenAPI-Spec (Q2: OpenAPI 3.0+)
-#   uvicorn      – ASGI-Server für FastAPI
-#   pydantic     – Datenmodelle (über FastAPI mitinstalliert)
-#   mcp[cli]     – MCP Python SDK, offizielle Referenzimplementierung (Q3)
-#
-# Agent-Schicht:
-#   groq         – LLM-Provider mit kostenlosem Function-Calling-Tier
-#                  (statt Gemini, da Gemini Free Tier in EU nicht verfügbar)
-#
-# Integration REST:
-#   httpx        – Async HTTP-Client für REST-Calls
-#
-# Keine Agent-Frameworks (kein LangChain, kein AutoGen):
-#   Begründung: Wohlin et al. (2012, Kap. 5) – Minimierung von
-#   Confounding Factors. Framework-spezifische Abstraktionen würden
-#   den direkten Paradigmenvergleich verfälschen.
-# ============================================================================
+# Direkte Abhängigkeiten des Thesis-Prototyps
+# Getestet mit Python 3.13.4
 
-fastapi>=0.115.0
-uvicorn>=0.34.0
-pydantic>=2.0.0
-mcp[cli]>=1.0.0
-groq>=0.25.0
-httpx>=0.28.0
+fastapi==0.136.0
+uvicorn==0.44.0
+pydantic==2.13.2
+mcp[cli]==1.27.0
+groq==1.2.0
+httpx==0.28.1

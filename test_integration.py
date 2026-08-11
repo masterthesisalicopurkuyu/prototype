@@ -28,16 +28,16 @@ async def test_provider():
     assert weather.location == "Stuttgart"
     assert weather.temp == 22.5
     assert weather.condition == "sunny"
-    print(f"    ✓ get_weather('Stuttgart') = {weather.temp}°C, {weather.condition}")
+    print(f"    [OK] get_weather('Stuttgart') = {weather.temp}°C, {weather.condition}")
 
     none_result = get_weather("Atlantis")
     assert none_result is None, "Atlantis sollte None sein"
-    print("    ✓ get_weather('Atlantis') = None")
+    print("    [OK] get_weather('Atlantis') = None")
 
     locations = get_locations()
     assert len(locations.locations) == 3
     assert "Stuttgart" in locations.locations
-    print(f"    ✓ get_locations() = {locations.locations}")
+    print(f"    v get_locations() = {locations.locations}")
 
 
 async def test_rest_integration():
@@ -56,20 +56,20 @@ async def test_rest_integration():
             data = r.json()
             assert data["location"] == "Stuttgart"
             assert data["temp"] == 22.5
-            print(f"    ✓ GET /api/v1/weather?location=Stuttgart → {data['temp']}°C")
+            print(f"    [OK] GET /api/v1/weather?location=Stuttgart -> {data['temp']}°C")
 
             # Locations-Endpoint
             r = await client.get("http://127.0.0.1:8000/api/v1/locations")
             assert r.status_code == 200
             data = r.json()
             assert len(data["locations"]) == 3
-            print(f"    ✓ GET /api/v1/locations → {data['locations']}")
+            print(f"    [OK] GET /api/v1/locations -> {data['locations']}")
 
             # Tool-Definitionen
             from integration_rest.tool_definitions import TOOL_DEFINITIONS
             assert len(TOOL_DEFINITIONS) == 2
             assert TOOL_DEFINITIONS[0]["function"]["name"] == "get_weather"
-            print(f"    ✓ tool_definitions.py → {len(TOOL_DEFINITIONS)} Tools definiert")
+            print(f"   [OK] tool_definitions.py -> {len(TOOL_DEFINITIONS)} Tools definiert")
 
             # Response-Mapping
             from integration_rest.response_mapper import map_response
@@ -78,7 +78,7 @@ async def test_rest_integration():
                 "wind_speed": 15.3, "condition": "sunny"
             })
             assert "22.5°C" in mapped
-            print(f"    ✓ response_mapper → '{mapped[:50]}...'")
+            print(f"    [OK] response_mapper -> '{mapped[:50]}...'")
 
             # RestToolExecutor
             from integration_rest.rest_client import RestToolExecutor
@@ -87,10 +87,10 @@ async def test_rest_integration():
             assert len(tools) == 2
             result = await executor.execute("get_weather", {"location": "Berlin"})
             assert "18.0°C" in result
-            print(f"    ✓ RestToolExecutor.execute('get_weather', Berlin) → OK")
+            print(f"    [OK] RestToolExecutor.execute('get_weather', Berlin) -> OK")
 
     except httpx.ConnectError:
-        print("    ⚠ REST-Server nicht erreichbar! Starte: python provider/rest_server.py")
+        print("    [WARNUNG] REST-Server nicht erreichbar! Starte: python provider/rest_server.py")
         return False
 
     return True
@@ -108,19 +108,19 @@ async def test_mcp_integration():
     assert len(tools) >= 1
     tool_names = [t["function"]["name"] for t in tools]
     assert "get_weather" in tool_names
-    print(f"    ✓ tools/list → {tool_names}")
+    print(f"     [OK] tools/list -> {tool_names}")
 
     # Schema vorhanden
     weather_tool = [t for t in tools if t["function"]["name"] == "get_weather"][0]
     assert "location" in weather_tool["function"]["parameters"]["properties"]
-    print(f"    ✓ Input-Schema automatisch: {list(weather_tool['function']['parameters']['properties'].keys())}")
+    print(f"     [OK] Input-Schema automatisch: {list(weather_tool['function']['parameters']['properties'].keys())}")
 
     # call_tool
     result = await executor.execute("get_weather", {"location": "München"})
     result_data = json.loads(result)
     assert result_data["location"] == "München"
     assert result_data["temp"] == 20.3
-    print(f"    ✓ call_tool('get_weather', München) → {result_data['temp']}°C")
+    print(f"     [OK] call_tool('get_weather', München) -> {result_data['temp']}°C")
 
     return True
 
@@ -150,12 +150,12 @@ async def test_functional_equivalence():
         assert rest_data["temp"] == mcp_data["temp"]
         assert rest_data["wind_speed"] == mcp_data["wind_speed"]
         assert rest_data["condition"] == mcp_data["condition"]
-        print(f"    ✓ REST: {rest_data['temp']}°C  ==  MCP: {mcp_data['temp']}°C")
-        print(f"    ✓ REST: {rest_data['condition']}  ==  MCP: {mcp_data['condition']}")
-        print("    ✓ Funktionale Äquivalenz bestätigt!")
+        print(f"     [OK] REST: {rest_data['temp']}°C  ==  MCP: {mcp_data['temp']}°C")
+        print(f"     [OK] REST: {rest_data['condition']}  ==  MCP: {mcp_data['condition']}")
+        print("     [OK] Funktionale Äquivalenz bestätigt!")
 
     except httpx.ConnectError:
-        print("    ⚠ REST-Server nicht erreichbar!")
+        print("   [WARNUNG] REST-Server nicht erreichbar!")
         return False
 
     return True
